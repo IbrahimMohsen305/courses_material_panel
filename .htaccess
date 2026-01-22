@@ -1,0 +1,43 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Set base directory
+RewriteBase /Courses/
+
+# Don't rewrite existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Section pages: /section/slug -> section.php?slug=slug
+RewriteRule ^section/([a-zA-Z0-9-]+)/?$ section.php?slug=$1 [L,QSA]
+
+# Material pages: /material/123 -> material.php?id=123
+RewriteRule ^material/([0-9]+)/?$ material.php?id=$1 [L,QSA]
+
+# Admin routes (optional clean URLs)
+RewriteRule ^admin/?$ admin.php [L,QSA]
+RewriteRule ^admin/sections/?$ admin.php?action=sections [L,QSA]
+RewriteRule ^admin/materials/?$ admin.php?action=materials [L,QSA]
+
+# Security: Deny access to sensitive files
+<FilesMatch "\.(sql|md|log)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+</IfModule>
